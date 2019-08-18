@@ -9,8 +9,10 @@ void push(int value)  //PUSH FUNCTION
 	if(top==10)
 	printf("Error : Stack is already full\n"); //ERROR SHOWING STACK IS ALREADY FULL
 	else
-	top++;
-	a[top]=value;
+	{
+		top++;
+		a[top]=value;
+	}
 }
 void pop()  //POP FUNCTION
 {
