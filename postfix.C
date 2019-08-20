@@ -1,102 +1,59 @@
 #include<stdio.h>
 #include<conio.h>
-#include<string.h>
+char stack[20];
+int top = -1;
+void push(char x)
+{
+    stack[++top] = x;
+}
 
-int top=-1;
-char stack[30], exp[30], res[30];
-void push(char data)
+char pop()
 {
-	stack[top] = data;
-	top++;
+    if(top == -1)
+	return -1;
+    else
+	return stack[top--];
 }
-void pop()
+
+int priority(char x)
 {
-	top--;
-}
-int prec(char data)
-{
-	if(top == -1)
-	{
-		return 1;
-	}
-	else if(stack[top] == '+' && data == '*' || stack[top] == '+' && data == '/')
-	{
-		return 1;
-	}
-	else if(stack[top] == '+' && data == '+' || stack[top] == '+' && data == '-')
-	{
-		return 0;
-	}
-	else if(stack[top] == '-' && data == '*' || stack[top] == '-' && data == '/')
-	{
-		return 1;
-	}
-	else if(stack[top] == '-' && data == '+' || stack[top] == '-' && data == '-')
-	{
-		return 0;
-	}
-	else if(stack[top] == '*' && data == '*' || stack[top] == '*' && data == '/' || stack[top] == '*' && data == '+'|| stack[top] == '*'|| data == '-')
-	{
-		return 0;
-	}
-	else if(stack[top] == '/' && data == '*' || stack[top] == '/' && data == '/' || stack[top] == '/' && data == '+'|| stack[top] == '/'|| data == '-')
-	{
-		return 0;
-	}
+    if(x == '(')
 	return 0;
+    if(x == '+' || x == '-')
+	return 1;
+    if(x == '*' || x == '/')
+	return 2;
 }
 
-
-
-
-void pref()
-{       int j=0,i;
-	for(i=0;exp[i]!='\0';i++)
-	{
-		if(exp[i]>='a' && exp[i]<='z'|| exp[i]>='A' && exp[i]<='Z')
-		{
-			res[j] = exp[i];
-			j++;
-		}
-		else if(exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/')
-		{
-			if(prec(exp[i])==1)
-			{
-				push(exp[i]);
-			}
-			else
-			{
-				res[j] = stack[top];
-				j++;
-				pop();
-				push(exp[i]);
-			}
-		}
-		else if(exp[i] == '(')
-			push(exp[i]);
-		else if(exp[i] == '}')
-		{
-			while(stack[top] != '(')
-			{
-				res[j] = stack[top];
-				j++;
-				pop();
-			}
-			pop();
-		}
-	}
-	res[j]='\0';
-}
-
-void main()
+int main()
 {
-	printf("Enter the Expression to find the postfix\n ");
-	scanf("%s", exp);
-	pref();
-	printf("%s\n",res);
-	printf("%d\n",strlen(res));
-	getch();
-
+    char exp[20];
+    char *e, x;
+    printf("Enter the expression :: ");
+    scanf("%s",exp);
+    e = exp;
+    while(*e != '\0')
+    {
+	if(isalnum(*e))
+	    printf("%c",*e);
+	else if(*e == '(')
+	    push(*e);
+	else if(*e == ')')
+	{
+	    while((x = pop()) != '(')
+		printf("%c", x);
+	}
+	else
+	{
+	    while(priority(stack[top]) >= priority(*e))
+		printf("%c",pop());
+	    push(*e);
+	}
+	e++;
+    }
+    while(top != -1)
+    {
+	printf("%c",pop());
+    }
+    getch();
 }
-
-
